@@ -11,7 +11,7 @@
  * my php skills to do so. i'm not use how many of you can run php-gtk, since php-gtk v2.0 is still new
  * so you can check docs here: http://gtk.php.net
  * and you can also port this to C++ or something, but i will be really happy if php coders will join me and build this tool
- * so we all can get good and fat results from Gource (http://code.google.com/p/gource/)
+ * so we all can get good and fast results from Gource (http://code.google.com/p/gource/)
 */
 
 if (!class_exists('gtk')) {
