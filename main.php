@@ -95,8 +95,6 @@ function run_gource(GtkWindow $wnd, GtkEntry $txtRepositoryPath, $options)
 
 //Create the login window
 $wnd = new GtkWindow();
-//$settings->save('last_repo_path', '/gfg/alkavan/src/git');
-//$settings->save('option_3', 'hay/hay');
 
 $wnd->set_title('gource-php-gtk');
 //Close the main loop when the window is destroyed
