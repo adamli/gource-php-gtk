@@ -18,6 +18,8 @@ if (!class_exists('gtk')) {
     die("Please load the php-gtk2 module in your php.ini\r\n");
 }
 
+include_once 'settings.php';
+
 /**
 *   This function gets called as soon as the user click RUN
 *
@@ -37,6 +39,10 @@ function run_gource(GtkWindow $wnd, GtkEntry $txtRepositoryPath, $options)
     }
 
     if ($errors !== null) {
+		//save setting
+		$settings = new Settings();
+		$settings->set("last_repo_path", $strRepositoryPath);
+
         //There was at least one error.
         //We show a message box with the errors
         $dialog = new GtkMessageDialog($wnd, Gtk::DIALOG_MODAL,
@@ -89,6 +95,9 @@ function run_gource(GtkWindow $wnd, GtkEntry $txtRepositoryPath, $options)
 
 //Create the login window
 $wnd = new GtkWindow();
+//$settings->save('last_repo_path', '/gfg/alkavan/src/git');
+//$settings->save('option_3', 'hay/hay');
+
 $wnd->set_title('gource-php-gtk');
 //Close the main loop when the window is destroyed
 $wnd->connect_simple('destroy', array('gtk', 'main_quit'));
@@ -100,6 +109,9 @@ $wnd->connect_simple('destroy', array('gtk', 'main_quit'));
 //path
 $lblRepositoryPath	= new GtkLabel('Repository Path', true);
 $txtRepositoryPath	= new GtkEntry();
+
+$settings = Settings::load();
+$txtRepositoryPath->set_text($settings['last_repo_path']);
 
 //options
 $chkOptionHideFiles = new GtkCheckButton('Hide Files', true);
