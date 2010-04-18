@@ -1,7 +1,7 @@
 <?php
 /**
  * @author Igal Alkon <igal.alkon@gmail.com>
- * @version 0.1
+ * @version 0.6
  *
  * a Class to save application settings (as settings.json)
  *
