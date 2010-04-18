@@ -1,7 +1,7 @@
 <?php
 /**
  * @author Igal Alkon <igal.alkon@gmail.com>
- * @version 0.1
+ * @version 0.06
  *
  * this is a php-gtk based program to easilly run gource repository virtulization
  * @todo need to add all other options to this
@@ -19,14 +19,8 @@ if (!class_exists('gtk')) {
 }
 
 include_once 'settings.php';
+include_once 'config.php';
 
-/**
-*   This function gets called as soon as the user click RUN
-*
-*   @param GtkWindow $wnd				the main window
-*   @param GtkEntry $txtRepositoryPath  path to repository
-*   @param GtkEntry $txtPassword		$options
-*/
 function run_gource(GtkWindow $wnd, GtkEntry $txtRepositoryPath, $options)
 {
     //fetch the values from the widgets into variables
@@ -93,6 +87,16 @@ function run_gource(GtkWindow $wnd, GtkEntry $txtRepositoryPath, $options)
     }
 }
 
+function show_file_select(GtkWindow $wnd)
+{
+	$ConfigFile = new ConfigFile('select config file');
+	$ConfigFile->show();
+}
+
+/**
+ * main application section
+ */
+
 //Create the login window
 $wnd = new GtkWindow();
 
@@ -123,9 +127,11 @@ $chkOptionHideTree = new GtkCheckButton('Hide Tree', true);
 $chkOptionHideUsers = new GtkCheckButton('Hide Users', true);
 $chkOptionHideUsernames = new GtkCheckButton('Hide Usernames', true);
 
+
 //buttons
-$btnRun				= new GtkButton('_Run');
-$btnQuit			= new GtkButton('_Quit');
+$btnRun			= new GtkButton('_Run');
+$btnConfigFile	= new GtkButton('_Config File');
+$btnQuit		= new GtkButton('_Quit');
 
 //Which widget should be activated when the
 // mnemonic (Alt+U or Alt+P) is pressed?
@@ -150,6 +156,7 @@ $options = array(
 );
 
 $btnRun->connect_simple('clicked', 'run_gource', $wnd, $txtRepositoryPath, $options);
+$btnConfigFile->connect_simple('clicked', 'show_file_select', $wnd);
 
 
 //Lay out all the widgets in the table
@@ -168,11 +175,11 @@ $tbl->attach($chkOptionHideTree,		1, 2, 2, 3);
 $tbl->attach($chkOptionHideUsers,		1, 2, 3, 4);
 $tbl->attach($chkOptionHideUsernames,	1, 2, 4, 5);
 
-
 //Add the buttons to a button box
 $bbox = new GtkHButtonBox();
 $bbox->set_layout(Gtk::BUTTONBOX_EDGE);
 $bbox->add($btnQuit);
+$bbox->add($btnConfigFile);
 $bbox->add($btnRun);
 
 
@@ -180,6 +187,7 @@ $bbox->add($btnRun);
 $vbox = new GtkVBox();
 $vbox->pack_start($tbl);
 $vbox->pack_start($bbox);
+
 
 //Add the vbox to the window
 $wnd->add($vbox);
