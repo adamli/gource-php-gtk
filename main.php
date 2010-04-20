@@ -55,30 +55,38 @@ function run_gource(GtkWindow $wnd, GtkEntry $txtRepositoryPath, $options)
         $dialog->run();
         $dialog->destroy();
 
-		$arr_options = array();
+		$arr_hide_options = array();
+		$arr_normal_options = array();
 		foreach($options as $option_name => $option) {
 			if($option->get_active() != 1) continue;
 			
 			switch($option_name) {
-				case 'chkOptionHideFiles': $arr_options[] = "files"; break;
-				case 'chkOptionHideFilenames': $arr_options[] = "filenames"; break;
-				case 'chkOptionHideDirnames': $arr_options[] = "dirnames"; break;
-				case 'chkOptionHideDates': $arr_options[] = "date"; break;
-				case 'chkOptionHideProgress': $arr_options[] = "progress"; break;
-				case 'chkOptionHideBloom': $arr_options[] = "bloom"; break;
-				case 'chkOptionHideMouse': $arr_options[] = "mouse"; break;
-				case 'chkOptionHideTree': $arr_options[] = "tree"; break;
-				case 'chkOptionHideUsers': $arr_options[] = "users"; break;
-				case 'chkOptionHideUsernames': $arr_options[] = "usernames"; break;
+				case 'chkOptionHideFiles':		$arr_hide_options[] = "files"; break;
+				case 'chkOptionHideFilenames':	$arr_hide_options[] = "filenames"; break;
+				case 'chkOptionHideDirnames':	$arr_hide_options[] = "dirnames"; break;
+				case 'chkOptionHideDates':		$arr_hide_options[] = "date"; break;
+				case 'chkOptionHideProgress':	$arr_hide_options[] = "progress"; break;
+				case 'chkOptionHideBloom':		$arr_hide_options[] = "bloom"; break;
+				case 'chkOptionHideMouse':		$arr_hide_options[] = "mouse"; break;
+				case 'chkOptionHideTree':		$arr_hide_options[] = "tree"; break;
+				case 'chkOptionHideUsers':		$arr_hide_options[] = "users"; break;
+				case 'chkOptionHideUsernames':	$arr_hide_options[] = "usernames"; break;
+
+				case 'chkOptionFullscreen':		$arr_normal_options[] = "--fullscreen"; break;
+				case 'chkOptionMultiSampling':	$arr_normal_options[] = "--multi-sampling"; break;
+				case 'chkOptionTransparent':	$arr_normal_options[] = "--transparent"; break;
+				case 'chkOptionSaveConfig':		$arr_normal_options[] = "--save-config default.conf"; break;
 			}
 		}
-		$str_options = implode(',', $arr_options);
-
 		// "&" is added to run gource in background
-		if(!empty ($arr_options))
-			system('gource '.$txtRepositoryPath->get_text()." --hide $str_options &", $gource_return);
-		else
-			system('gource '.$txtRepositoryPath->get_text()." &", $gource_return);
+		if(!empty ($arr_hide_options)) {
+			$str_hide_options = implode(',', $arr_hide_options);
+			$str_normal_options = implode(' ', $arr_normal_options);
+			system('gource '.$txtRepositoryPath->get_text()." --hide {$str_hide_options} {$str_normal_options} &", $gource_return);
+		} else {
+			$str_normal_options = implode(' ', $arr_normal_options);
+			system('gource '.$txtRepositoryPath->get_text()." {$str_normal_options}  &", $gource_return);
+		}
 
         //No error. You would need to hide the dialog now
         //instead of destroying it (because when you destroy it,
@@ -116,16 +124,24 @@ $settings = Settings::load();
 $txtRepositoryPath->set_text($settings['last_repo_path']);
 
 //options
-$chkOptionHideFiles = new GtkCheckButton('Hide Files', true);
+
+//hide
+$chkOptionHideFiles		= new GtkCheckButton('Hide Files', true);
 $chkOptionHideFilenames = new GtkCheckButton('Hide File Names', true);
-$chkOptionHideDirnames = new GtkCheckButton('Hide Directories', true);
-$chkOptionHideDates = new GtkCheckButton('Hide Dates', true);
-$chkOptionHideProgress = new GtkCheckButton('Hide Progress', true);
-$chkOptionHideBloom = new GtkCheckButton('Hide Bloom', true);
-$chkOptionHideMouse = new GtkCheckButton('Hide Mouse', true);
-$chkOptionHideTree = new GtkCheckButton('Hide Tree', true);
-$chkOptionHideUsers = new GtkCheckButton('Hide Users', true);
+$chkOptionHideDirnames	= new GtkCheckButton('Hide Directories', true);
+$chkOptionHideDates		= new GtkCheckButton('Hide Dates', true);
+$chkOptionHideProgress	= new GtkCheckButton('Hide Progress', true);
+$chkOptionHideBloom		= new GtkCheckButton('Hide Bloom', true);
+$chkOptionHideMouse		= new GtkCheckButton('Hide Mouse', true);
+$chkOptionHideTree		= new GtkCheckButton('Hide Tree', true);
+$chkOptionHideUsers		= new GtkCheckButton('Hide Users', true);
 $chkOptionHideUsernames = new GtkCheckButton('Hide Usernames', true);
+
+//general
+$chkOptionFullscreen	= new GtkCheckButton('Fullscreen', true);
+$chkOptionMultiSampling = new GtkCheckButton('Multi Sampling', true);
+$chkOptionTransparent	= new GtkCheckButton('Transparent', true);
+$chkOptionSaveConfig	= new GtkCheckButton('Save Config File', true);
 
 
 //buttons
@@ -143,16 +159,20 @@ $btnQuit->connect_simple('clicked', array($wnd, 'destroy'));
 // what to do when RUN is pressed
 
 $options = array(
-	'chkOptionHideFiles' => $chkOptionHideFiles,
-	'chkOptionHideFilenames' => $chkOptionHideFilenames,
-	'chkOptionHideDirnames' => $chkOptionHideDirnames,
-	'chkOptionHideDates' => $chkOptionHideDates,
-	'chkOptionHideProgress' => $chkOptionHideProgress,
-	'chkOptionHideBloom' => $chkOptionHideBloom,
-	'chkOptionHideMouse' => $chkOptionHideMouse,
-	'chkOptionHideTree' => $chkOptionHideTree,
-	'chkOptionHideUsers' => $chkOptionHideUsers,
-	'chkOptionHideUsernames' => $chkOptionHideUsernames,
+	'chkOptionHideFiles'		=> $chkOptionHideFiles,
+	'chkOptionHideFilenames'	=> $chkOptionHideFilenames,
+	'chkOptionHideDirnames'		=> $chkOptionHideDirnames,
+	'chkOptionHideDates'		=> $chkOptionHideDates,
+	'chkOptionHideProgress'		=> $chkOptionHideProgress,
+	'chkOptionHideBloom'		=> $chkOptionHideBloom,
+	'chkOptionHideMouse'		=> $chkOptionHideMouse,
+	'chkOptionHideTree'			=> $chkOptionHideTree,
+	'chkOptionHideUsers'		=> $chkOptionHideUsers,
+	'chkOptionHideUsernames'	=> $chkOptionHideUsernames,
+	'chkOptionFullscreen'		=> $chkOptionFullscreen,
+	'chkOptionMultiSampling'	=> $chkOptionMultiSampling,
+	'chkOptionTransparent'		=> $chkOptionTransparent,
+	'chkOptionSaveConfig'		=> $chkOptionSaveConfig,
 );
 
 $btnRun->connect_simple('clicked', 'run_gource', $wnd, $txtRepositoryPath, $options);
@@ -160,9 +180,9 @@ $btnConfigFile->connect_simple('clicked', 'show_file_select', $wnd);
 
 
 //Lay out all the widgets in the table
-$tbl = new GtkTable(2, 6);
+$tbl = new GtkTable(3, 6);
 $tbl->attach($lblRepositoryPath, 0, 1, 0, 1);
-$tbl->attach($txtRepositoryPath, 1, 2, 0, 1);
+$tbl->attach($txtRepositoryPath, 1, 3, 0, 1);
 
 //options attach to table
 $tbl->attach($chkOptionHideFiles,		0, 1, 1, 2);
@@ -174,6 +194,12 @@ $tbl->attach($chkOptionHideBloom,		1, 2, 1, 2);
 $tbl->attach($chkOptionHideTree,		1, 2, 2, 3);
 $tbl->attach($chkOptionHideUsers,		1, 2, 3, 4);
 $tbl->attach($chkOptionHideUsernames,	1, 2, 4, 5);
+
+$tbl->attach($chkOptionFullscreen,		2, 3, 1, 2);
+$tbl->attach($chkOptionMultiSampling,	2, 3, 2, 3);
+$tbl->attach($chkOptionTransparent,		2, 3, 3, 4);
+$tbl->attach($chkOptionSaveConfig,		2, 3, 4, 5);
+
 
 //Add the buttons to a button box
 $bbox = new GtkHButtonBox();
